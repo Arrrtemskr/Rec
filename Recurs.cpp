@@ -19,18 +19,20 @@ int value[10] = { 0 };
 int count = 0, countWORDS = 0;
 char begin[100] = { '\0' };
 char beginCopy[100] = { '\0' };
-
 char alphabet[10] = { "\0" };
+
 void enterAlph(char* mas, char* pos)
 {
 	for (int i = 0;i < 100;i++)
 	{
 		
+		if (pos[i] == '\0')
+			break;
 		for (int j = 0;j < 10;j++)
 		{
 			if (pos[i] == mas[j])
 				break;
-			if (pos[i] != mas[j] && mas[j] == 0 && pos[i]!='+' && pos[i] != '=')
+			if (pos[i] != mas[j] && mas[j] == 0 && pos[i]!='+' && pos[i] != '=' && isalpha(pos[i]))
 			{
 				mas[j] = pos[i];
 				count++;
@@ -44,10 +46,12 @@ void enterAlph(char* mas, char* pos)
 
 int checkSym(char* istr)
 {
+
 	int sym = 0, cur = 0;
-	for (int i = 0; i < strlen(istr) && istr != NULL;i++)
+	int sizeIstr = strlen(istr), sizeAlph = strlen(alphabet);
+	for (int i = 0; i < sizeIstr && istr != NULL;i++)
 	{
-		for (int j = 0;j < strlen(alphabet);j++)
+		for (int j = 0;j < sizeAlph;j++)
 		{
 			if (istr[i] == alphabet[j])
 			{
@@ -67,8 +71,8 @@ bool check()
 {
 	char* istr;
 	istr = strtok(begin, "+=");
-
-	// Выделение последующих частей
+	int allsym = 0;
+	
 	for (int i = 0;i < 7 && istr != NULL;i++, countWORDS++)
 	{
 		wordsMas[i].wordcur = istr;
@@ -77,23 +81,12 @@ bool check()
 			strcpy(begin, beginCopy);
 			return 0;
 		}
-			wordsMas[i].sym = checkSym(istr);
-		// Вывод очередной выделенной части
-		//printf(" % s\n", istr);
-		// Выделение очередной части строки
+		wordsMas[i].sym = checkSym(istr);
+		allsym += wordsMas[i].sym;
 		istr = strtok(NULL, "+=");
 	}
-
-
-	int allsym = 0;
-	for (int i = 0;i < countWORDS-1;i++)
-	{
-		allsym += wordsMas[i].sym;
-	}
-	if (allsym == wordsMas[countWORDS-1].sym)
-	{
+	if ((allsym- wordsMas[countWORDS - 1].sym) == wordsMas[countWORDS - 1].sym)
 		return 1;
-	}
 	countWORDS = 0;
 	strcpy(begin, beginCopy);
 	return 0;
@@ -111,16 +104,8 @@ void print()
 	printf("\n");
 }
 
-void printBrut()
-{
-	for (int i = 0;i < 10;i++)
-	{
-		printf("%d ", value[i]);
-	}
-	printf("\n");
-}
-
 float start = 0;
+
 void reverse(int pos)
 {
 	
@@ -134,7 +119,6 @@ void reverse(int pos)
 			
 			exit(0);
 		}
-		//printBrut();
 		return;
 	}
 
@@ -161,9 +145,9 @@ int main()
 	srand(time(NULL));
 	start = clock();
 	strcpy(beginCopy,begin);
-	printf("\n%s\n", begin);
+	//printf("\n%s\n", begin);
 	enterAlph(alphabet,begin);
-	printf("\nalphabet: %s\n", alphabet);
+	//printf("\nalphabet: %s\n", alphabet);
 	
 	reverse(0);
 	
